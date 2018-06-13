@@ -1,5 +1,6 @@
 import numpy as np
 from Agent import *
+from environment import *
 from collections import namedtuple
 
 
@@ -24,6 +25,13 @@ def main():
     # testing households
     for household in household_ls:
         print(household.master)
+        print(household.slaves)
+
+    for time in range(max_ts):
+        # hazard might happen
+
+
+
 
 
 

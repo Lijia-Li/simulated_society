@@ -53,6 +53,7 @@ class Man(Agent):
         Agent.__init__(self, "male")
         self.think_ability = np.random.beta(0.5, 0.5)  #in interval [0, 1]
         self.spouse = None
+        # todo (Lijia): link up the spouse
 
     def __repr__(self):
         return 'gend=%s, think_a=%s, eff=%s, h=%s, a=%s' % (
@@ -71,6 +72,10 @@ class Man(Agent):
         # order them to put resource back
         # possibly maintain tools
         return
+
+    def mind(self):
+        """this function shall simulate the mind model of the world"""
+        # a bayesian network to simulate mind stemp
 
 
 # a subclass of Agent
@@ -148,3 +153,6 @@ class Slave(Agent):
     def report(self):
         # update master regarding tasks
         return
+
+    # slave need to control the animals
+    #
