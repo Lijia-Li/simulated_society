@@ -82,7 +82,7 @@ class Woman(Agent):
             self.gender, self.num_babies, self.pregnant, self.effectiveness, self.health, self.age)
 
     def prepre_food(self):
-
+        return
 
     # todo: perhaps using await?
     def pregnant(self):
@@ -143,4 +143,3 @@ class Slave(Agent):
     def report(self):
         # update master regarding tasks
         return
-    
