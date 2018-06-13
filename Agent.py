@@ -22,6 +22,11 @@ class Agent:
         self.age = 0
         self.gender = gender
         self.effectiveness = 100
+        # physical health
+        # fertility
+        # perception with understanding
+        # reasoning
+        # emotional?
 
 
     # todo: effectiveness calculation
