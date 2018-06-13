@@ -22,6 +22,7 @@ class Agent:
         self.age = 0
         self.gender = gender
         self.effectiveness = 100
+        # todo lijia: this is a text to be deleted
 
 
     # todo: effectiveness calculation
