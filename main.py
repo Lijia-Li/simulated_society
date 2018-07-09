@@ -1,8 +1,7 @@
-import numpy as np
 from Agent import *
 from environment import *
-from collections import namedtuple
 
+env = simpy.Environment()
 
 def main():
     # initialize parameters
@@ -10,28 +9,24 @@ def main():
     agents = []
     max_ts = 1000
 
-    # # construct agents:
-    # men_ls = [Man() for i in range(num_men)]
-    # women_ls = [Woman() for i in range(num_women)]
-    # slave_ls = [Slave() for i in range(num_slave)]
-    # agents = men_ls + women_ls + slave_ls
-    #
-    # for agent in agents:
-    #     print(agent)
+    start = time.time()
 
     # construct households
-    household_ls = [Household(Man(), Woman(), [Slave() for i in range(np.random.choice(5,1)[0])]) for x in range(10)]
+    household_ls = [Household(x, Man(env, x), Woman(env, x), [Slave(env, x, i) for i in range(np.random.choice(5,1)[0])]) for x in range(10)]
 
     # testing households
     for household in household_ls:
         print(household.master)
         print(household.slaves)
+        for slave in household.slaves:
+            slave_assignment = Assignments(["cook", "sleep", "harvest", "cook"], [2, 4, 3, 5])
+            slave.assign_work(slave_assignment)
 
-    for time in range(max_ts):
-        # hazard might happen
+    env.run(until=20)
 
-
-
+    end = time.time()
+    print()
+    print("total time spent: %s s" % (end-start))
 
 
 
