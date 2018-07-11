@@ -8,12 +8,14 @@ rep_empty = "  "
 rep_agent = "@ "
 rep_ripen_food = "+ "
 rep_unripen_food = "- "
+rep_seed = ". "
 
 
 class Environment:
     def __init__(self, height, width):
         self.agents = []
         self.plants = []
+        self.seeds = []
         self.height = height
         self.width = width
         self.map = []
@@ -130,15 +132,45 @@ class Plant:
         self.grown_ts = 0
 
     def __repr__(self):
-        return "Location[x=%s, y=%s], grow time: %s, is_ripen %s is_alive %s" % \
+        return "Plant Location[x=%s, y=%s], grow time: %s, is_ripen %s is_alive %s" % \
                (self.x, self.y, self.grown_ts, self.is_ripen, self.is_alive)
 
-    def update(self):
+    def update(self, env):
         self.grown_ts += 1
         if self.grown_ts == 10:
             self.is_ripen = 1
+        if self.grown_ts != 0 and self.grown_ts % 10 == 0:
+            env.seeds.extend(self.reproduce(env))
 
-    # todo(Lijia): def reproduce(self):
+    def reproduce(self, env):
+        seed_ls = []
+        for y in range(self.y - 1, self.y + 2):
+            for x in range(self.x - 1, self.x + 2):
+                try:
+                    if env.map[y][x] == "  ":
+                        seed_ls.append(Seed(y, x))
+                except IndexError:
+                    pass
+        return seed_ls
+
+class Seed:
+    def __init__(self, y, x):
+        self.y = y
+        self.x = x
+        self.ts = -1
+        self.is_alive = 1
+
+    def __repr__(self):
+        return "Seed Location[x=%s, y=%s], grow time: %s, is_alive %s " % (self.x, self.y, self.ts, self.is_alive)
+
+    def update(self, env):
+        self.ts += 1
+        if self.ts >= 2:
+            if not np.random.choice(8):
+                self.is_alive = 0
+                env.plants.append(Plant(self.y, self.x))
+            else:
+                self.is_alive = 0
 
 
 def spwan_food(environment):
