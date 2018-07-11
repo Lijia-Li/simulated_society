@@ -27,32 +27,50 @@ class Environment:
     def update(self):
         for i, agent in enumerate(self.agents):
             agent.update()
-            if not agent.is_alive:
-                del self.agents[i]
-                continue
-            # print(agent)
-            self.map[agent.y][agent.x] = rep_agent
+            self.agents = self.clean_dead(self.agents)
+            if agent.is_alive:
+                self.map[agent.y][agent.x] = rep_agent
         for j, plant in enumerate(self.plants):
-            plant.update()
-            if not plant.is_alive:
-                del self.plants[j]
-                continue
-            # print(plant)
-            if plant.is_ripen:
-                self.map[plant.y][plant.x] = rep_ripen_food
-            else:
-                self.map[plant.y][plant.x] = rep_unripen_food
+            plant.update(self)
+            self.plants = self.clean_dead(self.plants)
+            if plant.is_alive:
+                if plant.is_ripen:
+                    self.map[plant.y][plant.x] = rep_ripen_food
+                else:
+                    self.map[plant.y][plant.x] = rep_unripen_food
+        for x, seed in enumerate(self.seeds):
+            seed.update(self)
+            if seed.is_alive: self.map[seed.y][seed.x] = rep_seed
+            self.seeds = self.clean_dead(self.seeds)
+
+    def clean_dead(self, objects):
+        for i, obj in enumerate(objects):
+            if not obj.is_alive:
+                self.map[obj.y][obj.x] = "  "
+                del objects[i]
+        return objects
 
     def print_map(self):
-        print("  +" + (self.width * "--") + "+")
+        print("   +" + (self.width * "--") + "+")
         for r, row in enumerate(self.map):
-            line = str(r % 10) + " |"
+            if r < 10:
+                line = str(r) + "  |"
+            else:
+                line = str(r) + " |"
             for col in row:
                 line += col
             line += "|"
             print(line)
-        print("  +" + (self.width * "--") + "+")
-        print("   " + "".join(str(c % 10) + " " for c in range(self.width)))
+        print("   +" + (self.width * "--") + "+")
+        last_line = "    "
+        for c in range(self.width + 1):
+            if c % 2 == 0:
+                if c < 10:
+                    c = str(c) + " "
+                last_line += str(c)
+            else:
+                last_line += "  "
+        print(last_line)
 
 
 class Agent:
@@ -68,7 +86,7 @@ class Agent:
         self.history = []
 
     def __repr__(self):
-        return "Location[x=%s, y=%s], age: %s, energy: %s, is_alive %s" % \
+        return "Agent Location[x=%s, y=%s], age: %s, energy: %s, is_alive %s" % \
                (self.x, self.y, self.age, self.energy, self.is_alive)
 
     def perception(self, environment):
@@ -179,23 +197,24 @@ def spwan_food(environment):
     )
 
 
-def put_agent(environment):
-    environment.agents.append(
-        Agent(np.random.choice(environment.height), np.random.choice(environment.width))
-    )
+def put_agent(environment, n):
+    for i in range(n):
+        environment.agents.append(
+            Agent(np.random.choice(environment.height), np.random.choice(environment.width))
+        )
 
 
 def main():
-    timestep = 11
+    timestep = 100
     for i in range(timestep):
         if i == 0:
-            env = Environment(height=10, width=10)
+            env = Environment(height=50, width=50)
             spwan_food(env)
-            put_agent(env)
+            put_agent(env, 5)
             env.print_map()
         else:
             env.update()
-            if i % 5 == 0:
+            if i % 10 == 0:
                 print("total time step: ", i)
                 env.print_map()
 
